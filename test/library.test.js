@@ -10,9 +10,6 @@ var webdriver = require ('selenium-webdriver'),
       beforeEach(function(){
         driver = new webdriver.Builder().forBrowser('chrome').build();
         driver.get('http://library-app.firebaseapp.com');
-        find = function(el){
-          return webdriver.WebDriver.prototype.findElement(By.css(el));
-        }
       });
 
       afterEach(function(){
@@ -21,7 +18,7 @@ var webdriver = require ('selenium-webdriver'),
 
       it('Changes Button opacity upon email being filled out', function(){
         var submitBtn = driver.findElement(By.css('.btn-lg'));
-        driver.find('input').sendKeys('us@fakemail.com');
+        driver.findElement(By.css('input')).sendKeys('us@fakemail.com');
         driver.wait(function(){
           return submitBtn.getCssValue('opacity').then(function(result){
             return result === '1';
