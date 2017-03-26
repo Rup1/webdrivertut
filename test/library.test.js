@@ -1,39 +1,35 @@
-var webdriver = require ('selenium-webdriver'),
-    { describe, it, after, before } = require('selenium-webdriver/testing');
-    By = webdriver.By,
-    until = webdriver.until;
-    var driver;
-    var find;
+var{ describe, it, after, before } = require('selenium-webdriver/testing');
+var Page = require('../lib/home_page');
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
+var should = chai.should();
+chai.use(chaiAsPromised);
 
     describe('library app scenarios', function(){
       this.timeout(50000);
+      
       beforeEach(function(){
-        driver = new webdriver.Builder().forBrowser('chrome').build();
-        driver.get('http://library-app.firebaseapp.com');
+        page = new Page();
+        page.visit('http://library-app.firebaseapp.com');
+        page.driver.manage().window().setPosition(0, -600);
       });
 
       afterEach(function(){
-        driver.quit();
+        page.quit();
       });
 
-      it('Changes Button opacity upon email being filled out', function(){
-        var submitBtn = driver.findElement(By.css('.btn-lg'));
-        driver.findElement(By.css('input')).sendKeys('us@fakemail.com');
-        driver.wait(function(){
-          return submitBtn.getCssValue('opacity').then(function(result){
-            return result === '1';
-          });
-        }, 5000);
+      it('Typing valid email changes opacity to 1', function(){
+        var btn = page.requestBtn();
+        btn.opacity.should.eventually.equal('1');
       });
 
-      it('submitting email shows an alert', function(){
-        var submitBtn = driver.findElement(By.css('.btn-lg'));
-        driver.findElement(By.css('input')).sendKeys('us@fakemail.com');
-        submitBtn.click();
-        driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+      it('Typing valid email enables request button', function(){
+        var btn = page.requestBtn();
+        btn.state.should.eventually.be.false;
       });
 
-      it('Shows a navbar', function(){
-        driver.findElement(By.css('nav'));
+      it('Clicking request invitation triggers a confirmation alert', function(){
+        var alert = page.alertSuccess();
+        alert.should.eventually.contain("Thank you!");
       });
     });
