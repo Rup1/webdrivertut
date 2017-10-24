@@ -1,2 +1,5 @@
 node_modules/
 mochawesome-reports/
+debug.log
+npm-debug.log.637348478
+
